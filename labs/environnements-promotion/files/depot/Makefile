@@ -42,14 +42,12 @@ publish:
 	@echo "Publié : inventaire $(VERSION)"
 
 # --- Déploiement ----------------------------------------------------------------
-# Installe une version DÉJÀ publiée ; ne construit rien.
-#   make deployer ENV=recette VERSION=1.1.0
-#   make deployer ENV=production VERSION=1.1.0 EMPREINTE=<empreinte relevée en recette>
-# Les valeurs passent au script par l'ENVIRONNEMENT : make ne les recolle pas
-# dans la ligne de commande, le shell ne peut donc pas les réinterpréter.
+# Installe une version DÉJÀ publiée ; ne construit rien. Les valeurs arrivent
+# par l'ENVIRONNEMENT, jamais sur la ligne de commande de make : une variable
+# passée à make (VERSION=...) serait développée par make, et une saisie comme
+# $(shell ...) s'exécuterait avant même le script.
+#   DEPLOI_ENV=recette DEPLOI_VERSION=1.1.0 make deployer
+#   DEPLOI_ENV=production DEPLOI_VERSION=1.1.0 DEPLOI_EMPREINTE=<empreinte relevée en recette> make deployer
 .PHONY: deployer
-deployer: export DEPLOI_ENV := $(ENV)
-deployer: export DEPLOI_VERSION := $(VERSION)
-deployer: export DEPLOI_EMPREINTE := $(EMPREINTE)
 deployer:
 	./scripts/deployer.sh "$$DEPLOI_ENV" "$$DEPLOI_VERSION" "$$DEPLOI_EMPREINTE"

@@ -62,3 +62,13 @@
       until: p100.status == 200
       retries: 60
       delay: 3
+
+    - name: Garder le nom du jeton qui a fui et l'empreinte des tests d'origine
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          umask 077
+          cp /etc/forgejo/jeton-publication-nom /root/jeton-fuite-nom
+          sha256sum /home/ansible/inventaire/tests/test_donnees.py | cut -d' ' -f1 > /root/tests-origine.sha256
+        executable: /bin/bash
+      changed_when: true

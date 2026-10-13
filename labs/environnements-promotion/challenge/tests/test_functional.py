@@ -61,6 +61,12 @@ def test_pipeline_de_deploiement_a_la_demande(host):
     assert not any("${{" in c for c in commandes), (
         "Une entrée est interpolée directement dans run: ; passez-la par env: pour éviter l'injection."
     )
+    for c in commandes:
+        if "make deployer" in c:
+            assert "=" not in c, (
+                f"Valeurs passées sur la ligne de commande de make ({c}) : make les développerait. "
+                "Passez DEPLOI_ENV, DEPLOI_VERSION et DEPLOI_EMPREINTE par env:."
+            )
 
 
 def test_promotion_sans_reconstruction(deploiements, empreintes):

@@ -11,7 +11,8 @@ On `forge-1.lab`, in `~/inventaire`. To run an on-demand pipeline: the forge's
 
 1. On `main`, a **`workflow_dispatch`** pipeline asks for the **environment**
    and the **version**, accepts an optional **digest**, and calls
-   `make deployer`. Inputs go through `env:`,
+   `make deployer` with no argument. Inputs go through `env:` (`DEPLOI_ENV`,
+   `DEPLOI_VERSION`, `DEPLOI_EMPREINTE`), never on the `make` command line,
    never interpolated into `run:`.
 2. The `/var/log/inventaire/deploiements.log` journal shows, in this order:
    `1.1.0` to **recette**, then `1.1.0` to **production** with the **same

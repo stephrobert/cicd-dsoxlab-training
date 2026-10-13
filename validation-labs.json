@@ -1,5 +1,5 @@
 {
-  "genere_le": "2026-10-13 20:37:21",
+  "genere_le": "2026-10-13 20:50:28",
   "act": "act version 0.2.84",
   "dsoxlab": "dsoxlab 0.3.5",
   "labs": {
@@ -10,7 +10,7 @@
       "score_avant": 0,
       "score_apres": 100,
       "tests": "6/6",
-      "duree_s": 40.5,
+      "duree_s": 40.4,
       "traces": [],
       "pourquoi": "",
       "date": "2026-10-13"
@@ -22,7 +22,7 @@
       "score_avant": 0,
       "score_apres": 100,
       "tests": "5/5",
-      "duree_s": 65.2,
+      "duree_s": 60.5,
       "traces": [],
       "pourquoi": "",
       "date": "2026-10-13"
@@ -34,7 +34,7 @@
       "score_avant": 0,
       "score_apres": 100,
       "tests": "7/7",
-      "duree_s": 38.8,
+      "duree_s": 38.9,
       "traces": [],
       "pourquoi": "",
       "date": "2026-10-13"
@@ -45,8 +45,8 @@
       "verdict": "VALIDE",
       "score_avant": 0,
       "score_apres": 100,
-      "tests": "9/9",
-      "duree_s": 68.8,
+      "tests": "11/11",
+      "duree_s": 78.1,
       "traces": [],
       "pourquoi": "",
       "date": "2026-10-13"

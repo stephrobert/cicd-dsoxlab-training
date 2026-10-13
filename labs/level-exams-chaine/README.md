@@ -10,16 +10,24 @@ production, then write down what you found. No hints: you have the forge
 `apprenant-lab`), the repository and both environments (staging on 8081,
 production on 8082).
 
+## Prerequisites
+
+The core lessons of the course, and being able to read then fix a Python
+function of a few lines.
+
 ## Goal (expected state)
 
-1. The integration pipeline only calls `make` targets, masks no failure, pins
-   every action to its commit SHA, prints no secret, and only publishes on a
-   `v*` tag.
-2. `main` is **green**, the `test_compte_par_role` test is untouched: the code
-   is what needs fixing.
+1. The integration pipeline runs `make lint`, `make test` and `make build`,
+   in that order, masks no failure, pins every action to its commit SHA, prints
+   no secret, and only publishes on a `v*` tag. The leaked token is **revoked**
+   and replaced in the `REGISTRE_JETON` secret.
+2. `main` is **green**, `tests/test_donnees.py` and the `make test` recipe are
+   untouched: the code is what needs fixing (one line of Python), and
+   production must count correctly.
 3. A **new version** is published from a green tag.
 4. Deployment installs the published version without rebuilding it, without
-   interpolating any input in `run:`; the new version runs in staging then in
+   interpolating any input in `run:` nor passing it on the `make` command
+   line; the new version runs in staging then in
    production, **same digest**, enforced for production.
 5. `risques.md`, at the repository root on `main`, names the security defects
    found, one per line, with their fix.
