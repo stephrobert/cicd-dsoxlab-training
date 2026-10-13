@@ -13,6 +13,7 @@ Python service with no dependency.
 | `etapes-et-declencheurs` | write a `make` target, then a pipeline that only calls `make lint test build`, green on `main`, red on a broken test in a pull request, failure replayed locally |
 | `artefacts` | publish the artifact built and tested by the pipeline on a `v*` tag, with a dedicated token kept as a secret, then find it again by its SHA-256 digest |
 | `environnements-promotion` | deploy a published version to staging, promote the very same digest to production, then roll back |
+| `level-exams-chaine` | level exam, no hints: make a lying chain honest and green, publish a corrected version, promote it by digest to production, list the risks found |
 
 ```bash
 uv tool install dsoxlab                 # or: uv tool upgrade dsoxlab

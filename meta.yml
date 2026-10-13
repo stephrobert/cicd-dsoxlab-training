@@ -54,3 +54,9 @@ sections:
       - etapes-et-declencheurs
       - artefacts
       - environnements-promotion
+
+  - id: epreuves
+    title: "Level exam"
+    description: "Repair a broken delivery chain, without hints: the end of the single level of the course."
+    labs:
+      - level-exams-chaine

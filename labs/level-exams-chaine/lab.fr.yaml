@@ -1,0 +1,3 @@
+id: level-exams-chaine
+title: "Épreuve de niveau : réparer une chaîne de livraison cassée"
+description: "Un dépôt dont la pipeline ment : un test en échec est ignoré, les étapes ne se rejouent pas en local, un secret fuit dans les journaux, toute branche publie, et le déploiement reconstruit l'artefact. Rendre la chaîne honnête et verte, publier une version corrigée, promouvoir exactement le même artefact en production, et lister les risques trouvés."

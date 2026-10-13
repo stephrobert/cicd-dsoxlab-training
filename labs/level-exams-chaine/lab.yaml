@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/stephrobert/dsoxlab/main/schemas/lab.schema.json
+id: level-exams-chaine
+title: "Level exam: repair a broken delivery chain"
+description: "A repository whose pipeline lies: a failing test is ignored, the steps cannot be replayed locally, a secret leaks into the logs, every branch publishes, and deployment rebuilds the artifact. Make the chain honest and green, publish a corrected version, promote the very same artifact to production, and list the risks you found."
+section: epreuves
+level: c1
+lab_type: challenge
+difficulty: intermediate
+estimated_time: 60m
+skills:
+  - ci
+  - cd
+  - artifacts
+  - pipeline-security
+distros:
+  - debian13
+doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/
+runtime:
+  type: vm
+  # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
+  session: local
+  targets:
+    - name: forge
+      host: forge-1.lab
+      label_en: "Debian 13, Forgejo, its runner and two environments"
+      label_fr: "Debian 13, Forgejo, son runner et deux environnements"
+  default: forge
+validation:
+  functional: true
+  security: true
+  persistence_after_reboot: false

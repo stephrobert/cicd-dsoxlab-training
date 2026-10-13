@@ -1,0 +1,21 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  integrer:
+    runs-on: debian
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@v7
+      - run: python3 -m pyflakes src tests
+      - run: make test || true
+      - run: make build
+      - run: |
+          echo "jeton utilisé : $(echo "$REGISTRE_JETON" | base64)"
+        env:
+          REGISTRE_JETON: ${{ secrets.REGISTRE_JETON }}
+      - run: make publish
+        env:
+          REGISTRE_JETON: ${{ secrets.REGISTRE_JETON }}
