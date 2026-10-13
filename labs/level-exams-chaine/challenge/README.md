@@ -15,6 +15,14 @@ production on 8082).
 The core lessons of the course, and being able to read then fix a Python
 function of a few lines.
 
+## Where tokens and secrets are managed in Forgejo
+
+Access tokens are managed in the account settings (**Applications**) or
+through the `/api/v1/users/apprenant/tokens` API; pipeline secrets in the
+repository settings (**Actions**, **Secrets**) or through the
+`/api/v1/repos/apprenant/inventaire/actions/secrets/<NAME>` API. Do not revoke
+the `lab-…` token: it is used by your clone and by the grader.
+
 ## Goal (expected state)
 
 1. The integration pipeline runs `make lint`, `make test` and `make build`,

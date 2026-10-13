@@ -58,8 +58,14 @@ def test_aucun_test_ignore_ni_etape_hors_make(pipelines):
     integration = [d for d in pipelines.values() if "push" in declencheurs(d) or "pull_request" in declencheurs(d)]
     assert integration, "Aucune pipeline d'intégration (push, pull_request)."
     for doc in integration:
+        assert "MAKEFLAGS" not in str(doc.get("env", "")), "MAKEFLAGS au niveau du workflow peut faire ignorer les échecs."
+        assert "defaults" not in doc, "Les réglages defaults du workflow changent la façon dont les étapes s'exécutent."
         for job in (doc.get("jobs") or {}).values():
             assert "continue-on-error" not in job, "Un job ignore ses échecs (continue-on-error)."
+            assert "MAKEFLAGS" not in str(job.get("env", "")) and "defaults" not in job, "Le job modifie l'exécution de make ou du shell."
+            assert not any("shell" in e or "MAKEFLAGS" in str(e.get("env", "")) for e in job.get("steps") or []), (
+                "Une étape change de shell ou de MAKEFLAGS."
+            )
             etapes = [e for e in job.get("steps") or [] if "run" in e]
             ordre = [str(e["run"]).strip() for e in etapes]
             for cible in ("make lint", "make test", "make build"):
@@ -123,6 +129,7 @@ def test_chaine_verte_et_honnete(host, pipelines):
     ).strip()
     assert actuel == origine, "tests/test_donnees.py a été modifié : c'est le code qu'il fallait corriger, pas le test."
     makefile = fichier(host, "Makefile") or ""
+    assert len(re.findall(r"^test\s*:", makefile, re.M)) == 1, "Le Makefile définit plusieurs règles test."
     assert re.search(r"^test:\n\tpython3 -m unittest discover -s tests -v$", makefile, re.M), (
         "La recette de make test a été modifiée (préfixe -, || true, autre commande)."
     )

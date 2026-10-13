@@ -15,6 +15,14 @@ sur 8081, production sur 8082).
 Les leçons du cœur de la formation, et savoir lire puis corriger une fonction
 Python de quelques lignes.
 
+## Où se gèrent jetons et secrets dans Forgejo
+
+Les jetons d'accès se gèrent dans les réglages du compte (**Applications**) ou
+par l'API `/api/v1/users/apprenant/tokens` ; les secrets de pipeline, dans les
+réglages du dépôt (**Actions**, **Secrets**) ou par l'API
+`/api/v1/repos/apprenant/inventaire/actions/secrets/<NOM>`. Ne révoquez pas le
+jeton `lab-…` : c'est celui de votre clone et du correcteur.
+
 ## Objectif (état attendu)
 
 1. La pipeline d'intégration lance `make lint`, `make test` et `make build`,
