@@ -1,0 +1,22 @@
+---
+# Défait ce que le lab a posé sur la machine : clone, services, artefacts et
+# journal des déploiements. Le dépôt et le registre sont remis à zéro par le
+# prochain setup.
+- name: Défaire le lab environnements-promotion
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Arrêter les deux environnements
+      ansible.builtin.shell:
+        cmd: systemctl stop inventaire@recette.service inventaire@production.service 2>/dev/null || true
+      changed_when: true
+
+    - name: Retirer clone, artefacts et journal
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /home/ansible/inventaire
+        - /opt/inventaire
+        - /var/log/inventaire

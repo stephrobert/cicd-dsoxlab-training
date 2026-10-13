@@ -1,0 +1,3 @@
+id: etapes-et-declencheurs
+title: "Des étapes dans le dépôt, une pipeline qui les orchestre"
+description: "Lancer lint, tests et build en cibles make, écrire la pipeline qui ne fait que les appeler sur un push vers main et sur une demande de fusion, la voir passer au vert, puis au rouge sur un test cassé, et reproduire l'échec en local."

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/stephrobert/dsoxlab/main/schemas/lab.schema.json
+id: artefacts
+title: "Build once, publish, find it again by its digest"
+description: "Publish the artifact the pipeline has just built and tested to the forge registry, on a version tag only, with a dedicated token kept as a secret; then find the published version again and check it by its SHA-256 digest."
+section: fondamentaux
+level: c1
+lab_type: lab
+difficulty: beginner
+estimated_time: 30m
+skills:
+  - ci
+  - artifacts
+  - package-registry
+  - sha256
+distros:
+  - debian13
+doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/
+runtime:
+  type: vm
+  # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
+  session: local
+  targets:
+    - name: forge
+      host: forge-1.lab
+      label_en: "Debian 13, Forgejo and its runner"
+      label_fr: "Debian 13, Forgejo et son runner"
+  default: forge
+validation:
+  functional: true
+  security: false
+  persistence_after_reboot: false

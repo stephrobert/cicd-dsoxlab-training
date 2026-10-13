@@ -1,0 +1,19 @@
+# La pipeline n'invente rien : elle appelle, dans l'ordre, les cibles du
+# Makefile que l'on lance aussi sur son poste.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  integrer:
+    runs-on: debian
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: make lint
+      - run: make test
+      - run: make build

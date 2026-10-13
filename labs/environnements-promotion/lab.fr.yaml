@@ -1,0 +1,3 @@
+id: environnements-promotion
+title: "Promouvoir le même artefact de la recette à la production, puis revenir en arrière"
+description: "Écrire la pipeline de déploiement à la demande, déployer une version publiée en recette, promouvoir exactement le même artefact en production sans le reconstruire, puis ramener la production à la version précédente ; chaque environnement garde sa configuration."

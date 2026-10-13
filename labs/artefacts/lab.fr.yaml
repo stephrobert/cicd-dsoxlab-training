@@ -1,0 +1,3 @@
+id: artefacts
+title: "Construire une fois, publier, retrouver par l'empreinte"
+description: "Publier dans le registre de la forge l'artefact que la pipeline vient de construire et de tester, sur une étiquette de version seulement, avec un jeton dédié gardé en secret ; puis retrouver la version publiée et la vérifier par son empreinte SHA-256."

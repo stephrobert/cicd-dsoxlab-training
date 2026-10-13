@@ -1,0 +1,63 @@
+---
+# État de départ : la pipeline publie sur étiquette, deux versions sont déjà
+# publiées (1.0.0 et 1.1.0), le script scripts/deployer.sh et la cible
+# make deployer existent, les environnements recette et production attendent
+# leur premier artefact. L'apprenant écrit la pipeline de déploiement.
+- name: Socle commun
+  ansible.builtin.import_playbook: ../_commun/socle.yaml
+
+- name: Dépôt qui publie sur étiquette
+  ansible.builtin.import_playbook: ../_commun/depot.yaml
+  vars:
+    depot_message: "inventaire 1.0.0 : intégration, publication sur étiquette, script de déploiement"
+    depot_overlay: environnements-promotion
+
+- name: Secret de publication
+  ansible.builtin.import_playbook: ../_commun/secret-registre.yaml
+
+- name: Environnements
+  ansible.builtin.import_playbook: ../_commun/environnements.yaml
+
+- name: Publier 1.0.0 puis 1.1.0
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  vars:
+    registre: "http://localhost:3000/api/packages/apprenant/generic/inventaire"
+  tasks:
+    - name: Étiqueter et pousser v1.0.0
+      ansible.builtin.shell:
+        cmd: git tag v1.0.0 && git push -q origin v1.0.0
+        chdir: /home/ansible/inventaire
+      become_user: ansible
+      changed_when: true
+
+    - name: Attendre la publication de 1.0.0
+      ansible.builtin.uri:
+        url: "{{ registre }}/1.0.0/inventaire-1.0.0.pyz.sha256"
+      register: p100
+      until: p100.status == 200
+      retries: 60
+      delay: 3
+
+    - name: Passer en 1.1.0, étiqueter et pousser
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          sed -i 's/^__version__ = "1.0.0"/__version__ = "1.1.0"/' src/inventaire/__init__.py
+          git commit -qam "inventaire 1.1.0"
+          git push -q origin main
+          git tag v1.1.0
+          git push -q origin v1.1.0
+        chdir: /home/ansible/inventaire
+        executable: /bin/bash
+      become_user: ansible
+      changed_when: true
+
+    - name: Attendre la publication de 1.1.0
+      ansible.builtin.uri:
+        url: "{{ registre }}/1.1.0/inventaire-1.1.0.pyz.sha256"
+      register: p110
+      until: p110.status == 200
+      retries: 60
+      delay: 3

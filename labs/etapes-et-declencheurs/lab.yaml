@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/stephrobert/dsoxlab/main/schemas/lab.schema.json
+id: etapes-et-declencheurs
+title: "Stages in the repository, a pipeline that orchestrates them"
+description: "Run lint, tests and build as make targets, write the pipeline that only calls them on a push to main and on a pull request, watch it go green, then red on a broken test, and reproduce the failure locally."
+section: fondamentaux
+level: c1
+lab_type: lab
+difficulty: beginner
+estimated_time: 30m
+skills:
+  - ci
+  - make
+  - forgejo-actions
+  - triggers
+distros:
+  - debian13
+doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/
+runtime:
+  type: vm
+  # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
+  session: local
+  targets:
+    - name: forge
+      host: forge-1.lab
+      label_en: "Debian 13, Forgejo and its runner"
+      label_fr: "Debian 13, Forgejo et son runner"
+  default: forge
+validation:
+  functional: true
+  security: false
+  persistence_after_reboot: false

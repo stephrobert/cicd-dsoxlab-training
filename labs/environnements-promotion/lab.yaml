@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/stephrobert/dsoxlab/main/schemas/lab.schema.json
+id: environnements-promotion
+title: "Promote the same artifact from staging to production, then roll back"
+description: "Write the on-demand deployment pipeline, deploy a published version to staging, promote the very same artifact to production without rebuilding it, then roll production back to the previous version; each environment keeps its own configuration."
+section: fondamentaux
+level: c1
+lab_type: lab
+difficulty: beginner
+estimated_time: 35m
+skills:
+  - cd
+  - environments
+  - promotion
+  - rollback
+distros:
+  - debian13
+doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/
+runtime:
+  type: vm
+  # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
+  session: local
+  targets:
+    - name: forge
+      host: forge-1.lab
+      label_en: "Debian 13, Forgejo, its runner and two environments"
+      label_fr: "Debian 13, Forgejo, son runner et deux environnements"
+  default: forge
+validation:
+  functional: true
+  security: false
+  persistence_after_reboot: false

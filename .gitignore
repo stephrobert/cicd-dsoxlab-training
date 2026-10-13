@@ -1,0 +1,28 @@
+# Progression et contexte : locaux à chaque machine, jamais versionnés.
+.dsoxlab.db
+.dsoxlab-context.json
+
+# Clé privée d'automatisation, posée par `dsoxlab instructor bootstrap`.
+ssh/id_ed25519
+
+# Répertoires de travail des labs `shell` : ce que l'apprenant y écrit lui
+# appartient, et le catalogue les recrée à chaque `run`.
+labs/**/challenge/work/
+
+# Le mot de passe qui chiffre solution/ par ansible-vault : il se transmet de
+# la main à la main, jamais par le dépôt.
+.vault-pass
+
+# Les solutions en clair, sources de solution/ : chiffrées par
+# scripts/chiffrer-solutions.sh, jamais versionnées.
+solution-en-clair/
+
+# Python et outillage local.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# La clé publique aussi : chaque poste génère sa paire par
+# `dsoxlab instructor bootstrap`.
+ssh/id_ed25519.pub

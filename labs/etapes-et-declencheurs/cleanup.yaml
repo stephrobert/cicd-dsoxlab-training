@@ -1,0 +1,16 @@
+---
+# Défait ce que l'apprenant a produit : le clone et la trace d'échec. Le
+# dépôt de la forge est recréé par le prochain setup ; la forge et le runner
+# restent, ils font partie du socle commun.
+- name: Défaire le lab etapes-et-declencheurs
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Retirer le clone et la trace d'échec
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /home/ansible/inventaire
+        - /home/ansible/echec-local.txt

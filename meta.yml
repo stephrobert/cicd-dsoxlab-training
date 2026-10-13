@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/stephrobert/dsoxlab/main/schemas/meta.schema.json
+#
+# Catalogue cicd-dsoxlab-training, décrit par le contrat v1 de dsoxlab.
+#
+# Les labs de la formation « Introduction aux pipelines CI/CD » du blog : le
+# modèle d'une chaîne de livraison avant l'outil. Tout tourne SANS COMPTE sur
+# une forge locale, Forgejo et son runner, installés dans une VM du lab.
+#
+# Plages déjà prises par les catalogues voisins : 10.10.20 Ansible, 10.10.30
+# Linux, 10.10.40 validation des guides, 10.10.50 Kubernetes, 10.10.60
+# DevSecOps, 10.10.70 Cloud. 10.10.90 est libre (relevé le 2026-10-13).
+#
+# Le nom du réseau est COURT à dessein : le provider kvm en dérive un pont
+# `virbr-<nom sans lab->`, et le noyau refuse un nom d'interface de plus de
+# 15 caractères.
+#
+# L'IP et la MAC d'un hôte dérivent de sa POSITION dans `hosts` : tout hôte
+# s'ajoutera EN FIN DE LISTE.
+schema_version: 1
+
+repo:
+  id: cicd-dsoxlab-training
+  category: cicd
+  title: "CI/CD Training: the model before the tool"
+  blog_url: "https://blog.stephane-robert.info/docs/pipeline-cicd/"
+  issues_url: "https://github.com/stephrobert/cicd-dsoxlab-training/issues"
+  description: |
+    Teaching labs for the blog's introduction to CI/CD pipelines, played
+    without any account on a local forge (Forgejo and its runner) inside a lab
+    VM. Stages written as repository targets, a pipeline that only
+    orchestrates them, an artifact built once and promoted from staging to
+    production. Every lab is graded on the state it leaves, read from the forge
+    and from the machine, never on the commands typed.
+
+infra:
+  provider:
+    - kvm
+    - incus
+  network: lab-cicd
+  cidr: 10.10.90.0/24
+  hosts:
+    - name: forge-1.lab
+      distro: debian13
+      role: forge
+      ram_mb: 4096
+      vcpu: 2
+      disk_gb: 20
+
+sections:
+  - id: fondamentaux
+    title: "The model before the tool"
+    description: "Stages in the repository, a pipeline that orchestrates them, an artifact built once and promoted across environments."
+    labs:
+      - etapes-et-declencheurs
+      - artefacts
+      - environnements-promotion

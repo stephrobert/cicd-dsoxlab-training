@@ -1,0 +1,348 @@
+---
+# Socle commun à tous les labs du catalogue : une forge Forgejo, son runner et
+# le dépôt `inventaire`, dans la VM forge-1.lab. Importé en tête de chaque
+# setup.yaml : dsoxlab n'a aucun point d'accroche après le provisionnement.
+#
+# Il est IDEMPOTENT et rapide au second passage : chaque étape vérifie l'état
+# réel (binaire à la bonne empreinte, service actif, compte présent), jamais un
+# simple fichier témoin. Un setup interrompu se rejoue sans rien casser.
+#
+# Versions relevées le 2026-10-13 à la source (codeberg.org, code.forgejo.org,
+# nodejs.org), binaires vérifiés par leur empreinte publiée.
+- name: Socle commun - forge Forgejo, runner et dépôt inventaire
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  vars:
+    forgejo_version: "16.0.6"
+    forgejo_sha256: "b90e22c2e5534fd7705d93d81ecea792b00f15cad0ee7bbc3061c65bf9524293"
+    runner_version: "13.2.0"
+    runner_sha256: "fadaec897f5e6641c363f87ecaf75f866f99c81b7097ec6b433e4c48123fcad1"
+    # Node.js sert aux actions JavaScript (actions/checkout) que le runner
+    # exécute directement sur la machine (exécuteur « host »).
+    node_version: "24.21.0"
+    node_sha256: "fd8e59d5a511510f6a298afb548f18c7d2b1be404d8b4a27d94fbe49f56cb2d6"
+    forge_url: "http://localhost:3000"
+    apprenant: "apprenant"
+    apprenant_mdp: "apprenant-lab"
+    utilisateur_vm: "ansible"
+    socle_depot: "{{ playbook_dir }}/../_commun/depot/"
+  tasks:
+    - name: Paquets de la forge, du runner et du dépôt
+      ansible.builtin.apt:
+        name: [git, make, curl, jq, sqlite3, xz-utils, openssl, python3, python3-pyflakes]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    # --- Forgejo -------------------------------------------------------------
+    - name: Compte système git
+      ansible.builtin.user:
+        name: git
+        system: true
+        shell: /bin/bash
+        home: /var/lib/forgejo
+        create_home: true
+
+    - name: Répertoires de Forgejo
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner }}"
+        group: git
+        mode: "{{ item.mode }}"
+      loop:
+        - {path: /var/lib/forgejo, owner: git, mode: "0750"}
+        - {path: /etc/forgejo, owner: root, mode: "0770"}
+
+    - name: Binaire Forgejo, vérifié par son empreinte
+      ansible.builtin.get_url:
+        url: "https://codeberg.org/forgejo/forgejo/releases/download/v{{ forgejo_version }}/forgejo-{{ forgejo_version }}-linux-amd64"
+        dest: /usr/local/bin/forgejo
+        checksum: "sha256:{{ forgejo_sha256 }}"
+        mode: "0755"
+
+    - name: Secrets internes de Forgejo, générés une fois
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          umask 077
+          for s in INTERNAL_TOKEN SECRET_KEY JWT_SECRET; do
+            f=/etc/forgejo/$s
+            [ -s "$f" ] && continue
+            case $s in
+              INTERNAL_TOKEN) /usr/local/bin/forgejo generate secret INTERNAL_TOKEN > "$f" ;;
+              SECRET_KEY) /usr/local/bin/forgejo generate secret SECRET_KEY > "$f" ;;
+              JWT_SECRET) /usr/local/bin/forgejo generate secret JWT_SECRET > "$f" ;;
+            esac
+            echo cree
+          done
+        executable: /bin/bash
+      register: secrets_forgejo
+      changed_when: "'cree' in secrets_forgejo.stdout"
+
+    - name: Lire les secrets internes
+      ansible.builtin.slurp:
+        src: "/etc/forgejo/{{ item }}"
+      loop: [INTERNAL_TOKEN, SECRET_KEY, JWT_SECRET]
+      register: secrets_lus
+      no_log: true
+
+    - name: Configuration app.ini
+      ansible.builtin.copy:
+        dest: /etc/forgejo/app.ini
+        owner: root
+        group: git
+        mode: "0640"
+        content: |
+          APP_NAME = Forge du lab CI/CD
+          RUN_USER = git
+          RUN_MODE = prod
+          WORK_PATH = /var/lib/forgejo
+
+          [server]
+          HTTP_ADDR = 0.0.0.0
+          HTTP_PORT = 3000
+          ROOT_URL = {{ forge_url }}/
+          DISABLE_SSH = true
+          LFS_START_SERVER = false
+
+          [database]
+          DB_TYPE = sqlite3
+          PATH = /var/lib/forgejo/data/forgejo.db
+
+          [security]
+          INSTALL_LOCK = true
+          INTERNAL_TOKEN = {{ secrets_lus.results[0].content | b64decode | trim }}
+          SECRET_KEY = {{ secrets_lus.results[1].content | b64decode | trim }}
+
+          [oauth2]
+          JWT_SECRET = {{ secrets_lus.results[2].content | b64decode | trim }}
+
+          [service]
+          DISABLE_REGISTRATION = true
+
+          [actions]
+          ENABLED = true
+          DEFAULT_ACTIONS_URL = https://data.forgejo.org
+
+          [packages]
+          ENABLED = true
+
+          [log]
+          LEVEL = Warn
+      no_log: true
+      notify: Redémarrer forgejo
+
+    - name: Unité systemd de Forgejo
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/forgejo.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Forgejo, la forge du lab
+          After=network.target
+
+          [Service]
+          User=git
+          Group=git
+          WorkingDirectory=/var/lib/forgejo
+          ExecStart=/usr/local/bin/forgejo web --config /etc/forgejo/app.ini
+          Restart=always
+          Environment=USER=git HOME=/var/lib/forgejo FORGEJO_WORK_DIR=/var/lib/forgejo
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: Redémarrer forgejo
+
+    - name: Forgejo démarré
+      ansible.builtin.systemd_service:
+        name: forgejo
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Appliquer un redémarrage en attente
+      ansible.builtin.meta: flush_handlers
+
+    - name: Attendre que Forgejo réponde
+      ansible.builtin.uri:
+        url: "{{ forge_url }}/api/v1/version"
+      register: version_forge
+      until: version_forge.status == 200
+      retries: 30
+      delay: 2
+
+    - name: Compte de l'apprenant sur la forge
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          F="/usr/local/bin/forgejo --config /etc/forgejo/app.ini --work-path /var/lib/forgejo"
+          if sudo -u git $F admin user list | awk '{print $2}' | grep -qx '{{ apprenant }}'; then
+            echo present
+          else
+            sudo -u git $F admin user create --username '{{ apprenant }}' --password '{{ apprenant_mdp }}' \
+              --email '{{ apprenant }}@forge.lab' --admin --must-change-password=false
+            echo cree
+          fi
+        executable: /bin/bash
+      register: compte
+      changed_when: "'cree' in compte.stdout"
+
+    - name: Jeton d'API de l'apprenant, créé une fois
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          umask 077
+          f=/etc/forgejo/jeton-apprenant
+          if [ -s "$f" ] && curl -fsS -H "Authorization: token $(cat $f)" {{ forge_url }}/api/v1/user >/dev/null; then
+            echo present; exit 0
+          fi
+          F="/usr/local/bin/forgejo --config /etc/forgejo/app.ini --work-path /var/lib/forgejo"
+          sudo -u git $F admin user generate-access-token --username '{{ apprenant }}' \
+            --token-name "lab-$(date +%s)" --scopes all --raw > "$f"
+          echo cree
+        executable: /bin/bash
+      register: jeton
+      changed_when: "'cree' in jeton.stdout"
+
+    - name: Lire le jeton
+      ansible.builtin.slurp:
+        src: /etc/forgejo/jeton-apprenant
+      register: jeton_lu
+      no_log: true
+
+    # --- Runner ----------------------------------------------------------------
+    - name: Node.js pour les actions JavaScript
+      ansible.builtin.get_url:
+        url: "https://nodejs.org/dist/v{{ node_version }}/node-v{{ node_version }}-linux-x64.tar.xz"
+        dest: "/opt/node-v{{ node_version }}-linux-x64.tar.xz"
+        checksum: "sha256:{{ node_sha256 }}"
+        mode: "0644"
+
+    - name: Node.js décompressé
+      ansible.builtin.unarchive:
+        src: "/opt/node-v{{ node_version }}-linux-x64.tar.xz"
+        dest: /opt
+        remote_src: true
+        creates: "/opt/node-v{{ node_version }}-linux-x64/bin/node"
+
+    - name: node dans le PATH
+      ansible.builtin.file:
+        src: "/opt/node-v{{ node_version }}-linux-x64/bin/node"
+        dest: /usr/local/bin/node
+        state: link
+
+    - name: Compte système du runner
+      ansible.builtin.user:
+        name: runner
+        system: true
+        shell: /bin/bash
+        home: /var/lib/forgejo-runner
+        create_home: true
+
+    - name: Binaire forgejo-runner, vérifié par son empreinte
+      ansible.builtin.get_url:
+        url: "https://code.forgejo.org/forgejo/runner/releases/download/v{{ runner_version }}/forgejo-runner-{{ runner_version }}-linux-amd64"
+        dest: /usr/local/bin/forgejo-runner
+        checksum: "sha256:{{ runner_sha256 }}"
+        mode: "0755"
+
+    - name: Configuration du runner (exécuteur host, label debian)
+      ansible.builtin.copy:
+        dest: /var/lib/forgejo-runner/config.yml
+        owner: runner
+        group: runner
+        mode: "0640"
+        content: |
+          log:
+            level: info
+          runner:
+            file: /var/lib/forgejo-runner/.runner
+            capacity: 1
+            timeout: 30m
+            labels:
+              - "debian:host"
+          cache:
+            enabled: false
+      notify: Redémarrer forgejo-runner
+
+    - name: Enregistrer le runner auprès de la forge
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          if [ -s /var/lib/forgejo-runner/.runner ]; then echo present; exit 0; fi
+          s=$(openssl rand -hex 20)
+          F="/usr/local/bin/forgejo --config /etc/forgejo/app.ini --work-path /var/lib/forgejo"
+          sudo -u git $F forgejo-cli actions register --name forge-1 --secret "$s" --labels debian:host >/dev/null
+          cd /var/lib/forgejo-runner
+          sudo -u runner /usr/local/bin/forgejo-runner create-runner-file --instance {{ forge_url }} \
+            --secret "$s" --name forge-1 --connect
+          echo cree
+        executable: /bin/bash
+      register: enregistrement
+      changed_when: "'cree' in enregistrement.stdout"
+
+    - name: Unité systemd du runner
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/forgejo-runner.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Forgejo Runner du lab
+          After=forgejo.service
+          Requires=forgejo.service
+
+          [Service]
+          User=runner
+          Group=runner
+          WorkingDirectory=/var/lib/forgejo-runner
+          ExecStart=/usr/local/bin/forgejo-runner daemon --config /var/lib/forgejo-runner/config.yml
+          Restart=always
+          Environment=HOME=/var/lib/forgejo-runner PATH=/usr/local/bin:/usr/bin:/bin
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: Redémarrer forgejo-runner
+
+    - name: Runner démarré
+      ansible.builtin.systemd_service:
+        name: forgejo-runner
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    # --- Poste de l'apprenant ----------------------------------------------------
+    - name: Identité git et identifiants de la forge pour l'apprenant
+      ansible.builtin.copy:
+        dest: "/home/{{ utilisateur_vm }}/{{ item.f }}"
+        owner: "{{ utilisateur_vm }}"
+        group: "{{ utilisateur_vm }}"
+        mode: "0600"
+        content: "{{ item.c }}"
+      loop:
+        - f: .gitconfig
+          c: |
+            [user]
+            	name = Apprenant du lab
+            	email = {{ apprenant }}@forge.lab
+            [credential]
+            	helper = store
+            [init]
+            	defaultBranch = main
+        - f: .git-credentials
+          c: "http://{{ apprenant }}:{{ jeton_lu.content | b64decode | trim }}@localhost:3000\n"
+      no_log: true
+
+  handlers:
+    - name: Redémarrer forgejo
+      ansible.builtin.systemd_service:
+        name: forgejo
+        state: restarted
+        daemon_reload: true
+
+    - name: Redémarrer forgejo-runner
+      ansible.builtin.systemd_service:
+        name: forgejo-runner
+        state: restarted
+        daemon_reload: true

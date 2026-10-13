@@ -1,0 +1,92 @@
+---
+# Remet le dépôt `apprenant/inventaire` dans l'état de départ d'un lab : le
+# dépôt commun (_commun/depot/), recouvert par les fichiers propres au lab
+# (<lab>/files/depot/, s'il existe). Supprime et recrée le dépôt sur la forge,
+# puis le clone dans le répertoire de l'apprenant.
+#
+# Importé après socle.yaml par chaque setup.yaml. Variable attendue :
+#   depot_message  le message du commit initial
+- name: Dépôt inventaire dans son état de départ
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  vars:
+    forge_url: "http://localhost:3000"
+    apprenant: "apprenant"
+    utilisateur_vm: "ansible"
+    depot_commun: "{{ playbook_dir }}/../_commun/depot/"
+    # playbook_dir est ici le répertoire de CE fichier (_commun) : le lab se
+    # nomme donc explicitement, par la variable depot_overlay de son setup.
+    depot_lab: "{{ playbook_dir }}/../{{ depot_overlay | default('aucun') }}/files/depot/"
+    depot_message: "Point de départ du lab"
+  tasks:
+    - name: Lire le jeton de l'apprenant
+      ansible.builtin.slurp:
+        src: /etc/forgejo/jeton-apprenant
+      register: jeton_lu
+      no_log: true
+
+    - name: Repartir d'une copie vierge du dépôt
+      ansible.builtin.file:
+        path: /var/tmp/depot-initial
+        state: absent
+
+    - name: Copier le dépôt commun
+      ansible.builtin.copy:
+        src: "{{ depot_commun }}"
+        dest: /var/tmp/depot-initial/
+        mode: preserve
+
+    - name: Le lab a-t-il ses propres fichiers ?
+      ansible.builtin.stat:
+        path: "{{ depot_lab }}"
+      delegate_to: localhost
+      become: false
+      register: overlay
+
+    - name: Recouvrir par les fichiers du lab
+      ansible.builtin.copy:
+        src: "{{ depot_lab }}"
+        dest: /var/tmp/depot-initial/
+        mode: preserve
+      when: overlay.stat.exists
+
+    - name: Recréer le dépôt sur la forge et y pousser l'état de départ
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          J=$(cat /etc/forgejo/jeton-apprenant)
+          A="Authorization: token $J"
+          curl -fsS -o /dev/null -X DELETE -H "$A" {{ forge_url }}/api/v1/repos/{{ apprenant }}/inventaire || true
+          # Les paquets appartiennent au compte, pas au dépôt : ils survivent à
+          # sa suppression. On retire toutes les versions publiées d'inventaire.
+          for v in $(curl -fsS -H "$A" "{{ forge_url }}/api/v1/packages/{{ apprenant }}?type=generic&q=inventaire" | jq -r '.[] | select(.name == "inventaire") | .version'); do
+            curl -fsS -o /dev/null -X DELETE -H "$A" "{{ forge_url }}/api/v1/packages/{{ apprenant }}/generic/inventaire/$v"
+          done
+          # La suppression peut demander un instant : on réessaie la création.
+          for _ in $(seq 1 10); do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST -H "$A" -H 'Content-Type: application/json' \
+              -d '{"name":"inventaire","default_branch":"main","private":false}' {{ forge_url }}/api/v1/user/repos)
+            [ "$code" = 201 ] && break
+            sleep 1
+          done
+          [ "$code" = 201 ] || { echo "création du dépôt refusée : HTTP $code" >&2; exit 1; }
+          cd /var/tmp/depot-initial
+          rm -rf .git
+          git init -q -b main
+          git -c user.name='Apprenant du lab' -c user.email='{{ apprenant }}@forge.lab' add -A
+          git -c user.name='Apprenant du lab' -c user.email='{{ apprenant }}@forge.lab' commit -q -m {{ depot_message | quote }}
+          git -c http.extraHeader="Authorization: token $J" push -q {{ forge_url }}/{{ apprenant }}/inventaire.git main
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Retirer l'ancien clone de l'apprenant
+      ansible.builtin.file:
+        path: "/home/{{ utilisateur_vm }}/inventaire"
+        state: absent
+
+    - name: Cloner le dépôt chez l'apprenant
+      ansible.builtin.command:
+        cmd: git clone -q {{ forge_url }}/{{ apprenant }}/inventaire.git /home/{{ utilisateur_vm }}/inventaire
+      become_user: "{{ utilisateur_vm }}"
+      changed_when: true

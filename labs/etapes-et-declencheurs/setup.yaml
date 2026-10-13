@@ -1,0 +1,22 @@
+---
+# État de départ : la forge, son runner, et le dépôt inventaire SANS pipeline,
+# dont le Makefile n'a pas encore de cible lint. L'apprenant l'écrit, puis
+# .forgejo/workflows/ci.yml, qui orchestre les cibles make.
+- name: Socle commun
+  ansible.builtin.import_playbook: ../_commun/socle.yaml
+
+- name: Dépôt sans pipeline
+  ansible.builtin.import_playbook: ../_commun/depot.yaml
+  vars:
+    depot_message: "inventaire 1.0.0 : service, tests et Makefile"
+    depot_overlay: etapes-et-declencheurs
+
+- name: Préparer le lab etapes-et-declencheurs
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Aucune trace d'un échec reproduit
+      ansible.builtin.file:
+        path: /home/ansible/echec-local.txt
+        state: absent

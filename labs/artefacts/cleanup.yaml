@@ -1,0 +1,15 @@
+---
+# Défait ce que l'apprenant a produit sur la machine. Le dépôt et le registre
+# sont remis à zéro par le prochain setup.
+- name: Défaire le lab artefacts
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Retirer le clone et l'artefact téléchargé
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /home/ansible/inventaire
+        - /home/ansible/inventaire-1.0.0.pyz

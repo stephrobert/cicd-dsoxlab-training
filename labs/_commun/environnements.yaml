@@ -1,0 +1,75 @@
+---
+# Deux environnements sur la machine du lab, recette (:8081) et production
+# (:8082) : le même artefact, une configuration par environnement
+# (/etc/inventaire/<env>.env). Seul le runner peut y installer un artefact et
+# redémarrer le service : on ne déploie que par la pipeline.
+- name: Environnements recette et production
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Services arrêtés, artefacts et journal retirés
+      ansible.builtin.shell:
+        cmd: |
+          systemctl stop inventaire@recette.service inventaire@production.service 2>/dev/null || true
+          rm -rf /opt/inventaire /var/log/inventaire
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Répertoires des environnements, au runner
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: runner
+        group: runner
+        mode: "0755"
+      loop: [/opt/inventaire/recette, /opt/inventaire/production, /var/log/inventaire]
+
+    - name: Répertoire de configuration
+      ansible.builtin.file:
+        path: /etc/inventaire
+        state: directory
+        mode: "0755"
+
+    - name: Données et configuration par environnement
+      ansible.builtin.copy:
+        dest: "/etc/inventaire/{{ item.f }}"
+        mode: "0644"
+        content: "{{ item.c }}"
+      loop:
+        - f: serveurs.json
+          c: '{"serveurs": [{"nom": "web-1", "role": "web"}, {"nom": "web-2", "role": "web"}, {"nom": "db-1", "role": "base"}]}'
+        - f: recette.env
+          c: "INVENTAIRE_ENV=recette\nINVENTAIRE_PORT=8081\nINVENTAIRE_DONNEES=/etc/inventaire/serveurs.json\n"
+        - f: production.env
+          c: "INVENTAIRE_ENV=production\nINVENTAIRE_PORT=8082\nINVENTAIRE_DONNEES=/etc/inventaire/serveurs.json\n"
+
+    - name: Unité systemd, une instance par environnement
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/inventaire@.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=inventaire, environnement %i
+          ConditionPathExists=/opt/inventaire/%i/inventaire.pyz
+
+          [Service]
+          User=nobody
+          EnvironmentFile=/etc/inventaire/%i.env
+          ExecStart=/usr/bin/python3 /opt/inventaire/%i/inventaire.pyz
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Le runner peut redémarrer les deux instances, et rien d'autre
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/runner-inventaire
+        mode: "0440"
+        validate: /usr/sbin/visudo -cf %s
+        content: |
+          runner ALL=(root) NOPASSWD: /usr/bin/systemctl restart inventaire@recette.service, /usr/bin/systemctl restart inventaire@production.service
+
+    - name: Recharger systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
