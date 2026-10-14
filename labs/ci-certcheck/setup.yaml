@@ -1,0 +1,139 @@
+---
+# État de départ du lab ci-certcheck : la forge et son runner (socle commun),
+# uv pour les étapes Python de la pipeline, et le dépôt `certcheck` de la
+# formation « Développer pour les Ops », dont la pipeline est fournie. Le
+# commit de départ porte un défaut de qualité (un import inutile) : la
+# pipeline de main est ROUGE à l'étape Qualité, et c'est à l'apprenant de la
+# lire et de la réparer.
+- name: Socle commun
+  ansible.builtin.import_playbook: ../_commun/socle.yaml
+
+- name: uv et le dépôt certcheck dans leur état de départ
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  vars:
+    forge_url: "http://localhost:3000"
+    apprenant: "apprenant"
+    utilisateur_vm: "ansible"
+    # Même version que le catalogue dev-pour-ops-dsoxlab-training (mise.toml),
+    # empreinte publiée par astral-sh/uv, relevée le 2026-10-14.
+    uv_version: "0.12.21"
+    uv_sha256: "23f02075b652bb1df64178cfae41b5caf160822e720e2663568f3f5d63bc52c0"
+    depot_source: "{{ playbook_dir }}/files/depot/"
+  tasks:
+    - name: Archive de uv, vérifiée par son empreinte
+      ansible.builtin.get_url:
+        url: "https://github.com/astral-sh/uv/releases/download/{{ uv_version }}/uv-x86_64-unknown-linux-gnu.tar.gz"
+        dest: "/opt/uv-{{ uv_version }}.tar.gz"
+        checksum: "sha256:{{ uv_sha256 }}"
+        mode: "0644"
+
+    - name: Répertoire de uv
+      ansible.builtin.file:
+        path: "/opt/uv-{{ uv_version }}"
+        state: directory
+        mode: "0755"
+
+    - name: uv décompressé
+      ansible.builtin.unarchive:
+        src: "/opt/uv-{{ uv_version }}.tar.gz"
+        dest: "/opt/uv-{{ uv_version }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+        creates: "/opt/uv-{{ uv_version }}/uv"
+
+    - name: uv dans le PATH du runner et de l'apprenant
+      ansible.builtin.file:
+        src: "/opt/uv-{{ uv_version }}/uv"
+        dest: /usr/local/bin/uv
+        state: link
+
+    - name: Lire le jeton de l'apprenant
+      ansible.builtin.slurp:
+        src: /etc/forgejo/jeton-apprenant
+      register: jeton_lu
+      no_log: true
+
+    - name: Repartir d'une copie vierge du dépôt
+      ansible.builtin.file:
+        path: /var/tmp/certcheck-initial
+        state: absent
+
+    - name: Copier le dépôt certcheck
+      ansible.builtin.copy:
+        src: "{{ depot_source }}"
+        dest: /var/tmp/certcheck-initial/
+        mode: preserve
+
+    - name: Recréer le dépôt sur la forge et y pousser l'état de départ
+      ansible.builtin.shell:
+        cmd: |
+          set -eu
+          J=$(cat /etc/forgejo/jeton-apprenant)
+          A="Authorization: token $J"
+          curl -fsS -o /dev/null -X DELETE -H "$A" {{ forge_url }}/api/v1/repos/{{ apprenant }}/certcheck || true
+          for _ in $(seq 1 10); do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST -H "$A" -H 'Content-Type: application/json' \
+              -d '{"name":"certcheck","default_branch":"main","private":false}' {{ forge_url }}/api/v1/user/repos)
+            [ "$code" = 201 ] && break
+            sleep 1
+          done
+          [ "$code" = 201 ] || { echo "création du dépôt refusée : HTTP $code" >&2; exit 1; }
+          cd /var/tmp/certcheck-initial
+          rm -rf .git
+          git init -q -b main
+          git -c user.name='Ines Ferreira' -c user.email='ines@exploitation.example.invalid' add -A
+          git -c user.name='Ines Ferreira' -c user.email='ines@exploitation.example.invalid' \
+            commit -q -m "certcheck 0.5.0 : paquet, tests et intégration continue"
+          git -c http.extraHeader="Authorization: token $J" push -q {{ forge_url }}/{{ apprenant }}/certcheck.git main
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Attendre la fin de la première pipeline de main
+      ansible.builtin.shell:
+        cmd: >-
+          J=$(cat /etc/forgejo/jeton-apprenant);
+          curl -s -H "Authorization: token $J"
+          {{ forge_url }}/api/v1/repos/{{ apprenant }}/certcheck/commits/main/status | jq -r .state
+        executable: /bin/bash
+      register: etat_main
+      until: etat_main.stdout in ["success", "failure", "error"]
+      retries: 100
+      delay: 3
+      changed_when: false
+
+    - name: Retirer ce que l'apprenant avait produit
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "/home/{{ utilisateur_vm }}/certcheck"
+        - "/home/{{ utilisateur_vm }}/echec-local.txt"
+
+    - name: Cloner le dépôt chez l'apprenant
+      ansible.builtin.command:
+        cmd: git clone -q {{ forge_url }}/{{ apprenant }}/certcheck.git /home/{{ utilisateur_vm }}/certcheck
+      become_user: "{{ utilisateur_vm }}"
+      changed_when: true
+
+    - name: Le fichier de réponses, vierge
+      ansible.builtin.copy:
+        dest: "/home/{{ utilisateur_vm }}/reponses-ci.yaml"
+        owner: "{{ utilisateur_vm }}"
+        group: "{{ utilisateur_vm }}"
+        mode: "0644"
+        content: |
+          # Vos réponses sur la pipeline de certcheck (.forgejo/workflows/ci.yml).
+          # Remplacez chaque valeur ; les clés ne changent pas.
+
+          # 1. Les noms des étapes, dans l'ordre où la pipeline les exécute
+          #    (le champ name: de chaque étape). Une liste.
+          ordre_des_etapes: []
+
+          # 2. Le nom de l'étape qui installe les dépendances du projet.
+          etape_des_dependances: ""
+
+          # 3. Le nom de l'étape en échec dans la première pipeline de main,
+          #    celle du commit de départ.
+          etape_en_echec_sur_main: ""

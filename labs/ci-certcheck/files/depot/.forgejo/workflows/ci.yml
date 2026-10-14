@@ -1,0 +1,32 @@
+# L'intégration continue de certcheck : à chaque push sur main et à chaque
+# demande de fusion, la forge rejoue les contrôles du poste, dans l'ordre.
+# La première étape en échec arrête le job.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  integrer:
+    runs-on: debian
+    steps:
+      - name: Récupérer le code
+        uses: https://data.forgejo.org/actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Préparer Python
+        run: uv python find ">=3.12"
+      - name: Installer les dépendances
+        run: uv sync --locked
+      - name: Qualité
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Tests
+        run: uv run pytest -v
+      - name: Construire le paquet
+        run: uv build

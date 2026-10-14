@@ -47,6 +47,14 @@ infra:
       disk_gb: 20
 
 sections:
+  # Le lab de la formation « Développer pour les Ops » (dev-pour-ops) : sa
+  # pipeline se joue sur cette forge, la même que celle de la formation CI/CD.
+  - id: initiation
+    title: "A first CI, for Development for Ops"
+    description: "Read the pipeline provided with a small Python tool, repair a red run, make a test and the formatting fail on purpose in a pull request, read each failure, reproduce it locally and fix it."
+    labs:
+      - ci-certcheck
+
   - id: fondamentaux
     title: "The model before the tool"
     description: "Stages in the repository, a pipeline that orchestrates them, an artifact built once and promoted across environments."

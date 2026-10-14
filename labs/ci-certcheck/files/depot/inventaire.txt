@@ -1,0 +1,8 @@
+# Parc surveillé par certcheck
+# hôte     certificat collecté sur l'hôte
+web-01     certs/web-01.pem
+web-02     certs/web-02.pem
+vpn-01     certs/vpn-01.pem
+api-01     certs/api-01.pem
+api-02     certs/api-02.pem
+db-01      certs/db-01.pem

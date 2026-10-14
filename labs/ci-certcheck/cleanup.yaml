@@ -1,0 +1,27 @@
+---
+# Défait ce que l'apprenant a produit : le clone, la trace d'échec, les
+# réponses, et le dépôt certcheck de la forge, qui n'appartient qu'à ce lab.
+# La forge, le runner et uv restent : ils font partie du socle.
+- name: Défaire le lab ci-certcheck
+  hosts: lab_target
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Retirer le clone, la trace d'échec et les réponses
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /home/ansible/certcheck
+        - /home/ansible/echec-local.txt
+        - /home/ansible/reponses-ci.yaml
+        - /var/tmp/certcheck-initial
+
+    - name: Supprimer le dépôt certcheck de la forge
+      ansible.builtin.shell:
+        cmd: >-
+          J=$(cat /etc/forgejo/jeton-apprenant);
+          curl -fsS -o /dev/null -X DELETE -H "Authorization: token $J"
+          http://localhost:3000/api/v1/repos/apprenant/certcheck || true
+        executable: /bin/bash
+      changed_when: true

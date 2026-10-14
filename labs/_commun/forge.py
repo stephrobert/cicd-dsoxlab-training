@@ -31,25 +31,25 @@ def api(host, chemin: str):
     return json.loads(corps)
 
 
-def fichier(host, chemin: str, ref: str = "main") -> str | None:
+def fichier(host, chemin: str, ref: str = "main", depot: str = DEPOT) -> str | None:
     """Contenu d'un fichier du dépôt sur une référence, ou None."""
     cmd = (
         'J=$(cat /etc/forgejo/jeton-apprenant); '
         f'curl -s -f -H "Authorization: token $J" '
-        f'{shlex.quote(f"{FORGE}/api/v1/repos/{DEPOT}/raw/{chemin}?ref={ref}")}'
+        f'{shlex.quote(f"{FORGE}/api/v1/repos/{depot}/raw/{chemin}?ref={ref}")}'
     )
     res = host.run(cmd)
     return res.stdout if res.rc == 0 else None
 
 
-def workflows(host, ref: str = "main") -> dict[str, dict]:
+def workflows(host, ref: str = "main", depot: str = DEPOT) -> dict[str, dict]:
     """Les fichiers de pipeline du dépôt, parsés : {nom: document YAML}."""
-    liste = api(host, f"repos/{DEPOT}/contents/.forgejo/workflows?ref={ref}") or []
+    liste = api(host, f"repos/{depot}/contents/.forgejo/workflows?ref={ref}") or []
     rendus = {}
     for entree in liste:
         if entree.get("type") != "file" or not entree["name"].endswith((".yml", ".yaml")):
             continue
-        texte = fichier(host, f".forgejo/workflows/{entree['name']}", ref)
+        texte = fichier(host, f".forgejo/workflows/{entree['name']}", ref, depot)
         if texte is None:
             continue
         try:
@@ -79,9 +79,9 @@ def etapes_run(doc: dict) -> list[str]:
     return commandes
 
 
-def statut(host, ref: str) -> str | None:
+def statut(host, ref: str, depot: str = DEPOT) -> str | None:
     """État combiné des statuts de commit d'une référence (success, failure, pending)."""
-    rendu = api(host, f"repos/{DEPOT}/commits/{ref}/status")
+    rendu = api(host, f"repos/{depot}/commits/{ref}/status")
     if not rendu or not rendu.get("statuses"):
         return None
     return rendu.get("state")

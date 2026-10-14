@@ -1,0 +1,3 @@
+id: ci-certcheck
+title: "La CI de certcheck : six étapes, un run rouge, une correction"
+description: "Lire la pipeline fournie avec certcheck, un petit outil Python : récupérer le code, préparer Python, installer les dépendances, vérifier la qualité, lancer les tests, construire le paquet. Réparer main, rouge à l'étape de qualité, puis faire échouer un test et le formatage dans une demande de fusion, lire chaque run rouge, le reproduire en local et le corriger."

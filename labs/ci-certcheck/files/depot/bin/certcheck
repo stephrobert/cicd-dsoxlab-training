@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Point d'entrée de l'outil, imposé par le contrat (CONTRAT.md) : c'est lui
+# que cron, un pipeline et les contrôles du lab appellent.
+#
+# certcheck est un paquet Python (src/certcheck/) : uv le lance dans
+# l'environnement du projet. --project, et non --directory : le dossier
+# courant reste celui de l'appelant, et un chemin relatif garde son sens.
+exec uv run --quiet --project "$(dirname "$0")/.." certcheck "$@"

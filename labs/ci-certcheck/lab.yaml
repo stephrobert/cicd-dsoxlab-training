@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/stephrobert/dsoxlab/main/schemas/lab.schema.json
+id: ci-certcheck
+title: "certcheck's CI: six stages, a red run, a fix"
+description: "Read the pipeline provided with certcheck, a small Python tool: fetch the code, prepare Python, install the dependencies, check quality, run the tests, build the package. Repair main, which is red at the quality stage, then make a test fail and the formatting fail in a pull request, read each red run, reproduce it locally and fix it."
+section: initiation
+level: o1
+lab_type: lab
+difficulty: beginner
+estimated_time: 30m
+skills:
+  - ci
+  - forgejo-actions
+  - python
+  - testing
+  - linting
+distros:
+  - debian13
+doc_url: https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/
+runtime:
+  type: vm
+  # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
+  session: local
+  targets:
+    - name: forge
+      host: forge-1.lab
+      label_en: "Debian 13, Forgejo, its runner and uv"
+      label_fr: "Debian 13, Forgejo, son runner et uv"
+  default: forge
+validation:
+  functional: true
+  security: false
+  persistence_after_reboot: false

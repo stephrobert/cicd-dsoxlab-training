@@ -10,6 +10,7 @@ Python service with no dependency.
 
 | Lab | What you do |
 |---|---|
+| `ci-certcheck` | for the Development for Ops course: read the pipeline provided with certcheck, a small Python tool (dependencies, quality, tests, package), repair `main`, then make a test and the formatting fail in a pull request, replay the failure locally and fix it |
 | `etapes-et-declencheurs` | write a `make` target, then a pipeline that only calls `make lint test build`, green on `main`, red on a broken test in a pull request, failure replayed locally |
 | `artefacts` | publish the artifact built and tested by the pipeline on a `v*` tag, with a dedicated token kept as a secret, then find it again by its SHA-256 digest |
 | `environnements-promotion` | deploy a published version to staging, promote the very same digest to production, then roll back |

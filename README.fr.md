@@ -10,6 +10,7 @@ service Python sans dépendance.
 
 | Lab | Ce que vous faites |
 |---|---|
+| `ci-certcheck` | pour la formation Développer pour les Ops : lire la pipeline fournie avec certcheck, un petit outil Python (dépendances, qualité, tests, paquet), réparer `main`, puis faire échouer un test et le formatage dans une demande de fusion, rejouer l'échec en local et corriger |
 | `etapes-et-declencheurs` | écrire une cible `make`, puis une pipeline qui n'appelle que `make lint test build`, verte sur `main`, rouge sur un test cassé dans une demande de fusion, échec rejoué en local |
 | `artefacts` | publier sur une étiquette `v*` l'artefact construit et testé par la pipeline, avec un jeton dédié gardé en secret, puis le retrouver par son empreinte SHA-256 |
 | `environnements-promotion` | déployer une version publiée en recette, promouvoir exactement la même empreinte en production, puis revenir en arrière |

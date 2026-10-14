@@ -1,5 +1,5 @@
 {
-  "genere_le": "2026-10-13 21:05:54",
+  "genere_le": "2026-10-14 06:56:23",
   "act": "act version 0.2.84",
   "dsoxlab": "dsoxlab 0.3.5",
   "labs": {
@@ -14,6 +14,18 @@
       "traces": [],
       "pourquoi": "",
       "date": "2026-10-13"
+    },
+    "ci-certcheck": {
+      "id": "ci-certcheck",
+      "chemin": "ci-certcheck",
+      "verdict": "VALIDE",
+      "score_avant": 0,
+      "score_apres": 100,
+      "tests": "5/5",
+      "duree_s": 72.1,
+      "traces": [],
+      "pourquoi": "",
+      "date": "2026-10-14"
     },
     "environnements-promotion": {
       "id": "environnements-promotion",
