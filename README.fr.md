@@ -168,17 +168,20 @@ Un 0 accuserait le lab de ce qui manque au poste, qui est ici le plus souvent
 
 ## Catalogue
 
+Les labs vivent sous `labs/` et sont ordonnés par `meta.yml`. Le tableau ci-dessous est généré depuis les vrais `lab.yaml`, leurs titres et leurs guides compagnons : `python3 scripts/gen_catalog.py` le régénère.
+
+<!-- LABS:START -->
 ### Une première CI, pour Développer pour les Ops
+
+Lire la pipeline fournie avec `certcheck`, un petit outil Python (dépendances, qualité, tests, paquet), réparer `main`, puis faire échouer un test et le formatage dans une demande de fusion, rejouer l'échec en local et corriger.
 
 | Lab (id) | Titre | Niveau | Runtime | Guide compagnon |
 |---|---|---|---|---|
 | `ci-certcheck` | La CI de certcheck : six étapes, un run rouge, une correction | o1 | vm | [guide](https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/) |
 
-Lire la pipeline fournie avec `certcheck`, un petit outil Python (dépendances,
-qualité, tests, paquet), réparer `main`, puis faire échouer un test et le
-formatage dans une demande de fusion, rejouer l'échec en local et corriger.
-
 ### Le modèle avant l'outil
+
+Écrire une cible `make`, puis une pipeline qui n'appelle que `make lint test build`, verte sur `main` et rouge sur un test cassé dans une demande de fusion, avec l'échec rejoué en local. Puis publier l'artefact sur une étiquette `v*` avec un jeton dédié gardé en secret, le retrouver par son empreinte SHA-256, et promouvoir **cette même empreinte** de la recette à la production avant de revenir en arrière.
 
 | Lab (id) | Titre | Niveau | Runtime | Guide compagnon |
 |---|---|---|---|---|
@@ -186,27 +189,16 @@ formatage dans une demande de fusion, rejouer l'échec en local et corriger.
 | `artefacts` | Construire une fois, publier, retrouver par l'empreinte | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/) |
 | `environnements-promotion` | Promouvoir le même artefact de la recette à la production, puis revenir en arrière | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/) |
 
-Écrire une cible `make`, puis une pipeline qui n'appelle que
-`make lint test build`, verte sur `main` et rouge sur un test cassé dans une
-demande de fusion, avec l'échec rejoué en local. Puis publier l'artefact sur
-une étiquette `v*` avec un jeton dédié gardé en secret, le retrouver par son
-empreinte SHA-256, et promouvoir **cette même empreinte** de la recette à la
-production avant de revenir en arrière.
-
 ### Épreuve de niveau
+
+Sans indice : rendre honnête et verte une chaîne qui ment, publier une version corrigée, la promouvoir par empreinte en production, et lister les risques trouvés.
 
 | Lab (id) | Titre | Niveau | Runtime | Guide compagnon |
 |---|---|---|---|---|
 | `level-exams-chaine` | Épreuve de niveau : réparer une chaîne de livraison cassée | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/epreuve-chaine-cassee/) |
 
-Sans indice : rendre honnête et verte une chaîne qui ment, publier une version
-corrigée, la promouvoir par empreinte en production, et lister les risques
-trouvés.
-
-_5 labs. Ce catalogue n'a pas encore de `scripts/gen_catalog.py`, donc cette
-table se tient à la main : confrontez-la à `dsoxlab list-labs` quand vous
-ajoutez un lab._
-
+_5 labs, table générée par `scripts/gen_catalog.py`._
+<!-- LABS:END -->
 ## Contribuer
 
 Un lab est prouvé **dans les deux sens** avant d'être fusionné,

@@ -51,13 +51,15 @@ sections:
   # pipeline se joue sur cette forge, la même que celle de la formation CI/CD.
   - id: initiation
     title: "A first CI, for Development for Ops"
-    description: "Read the pipeline provided with a small Python tool, repair a red run, make a test and the formatting fail on purpose in a pull request, read each failure, reproduce it locally and fix it."
+    description: >-
+      Read the pipeline shipped with `certcheck`, a small Python tool (dependencies, quality, tests, package), repair `main`, then make a test and the formatting fail in a pull request, replay the failure locally and fix it.
     labs:
       - ci-certcheck
 
   - id: fondamentaux
     title: "The model before the tool"
-    description: "Stages in the repository, a pipeline that orchestrates them, an artifact built once and promoted across environments."
+    description: >-
+      Write a `make` target, then a pipeline that only calls `make lint test build`, green on `main` and red on a broken test in a pull request, with the failure replayed locally. Then publish the artifact on a `v*` tag with a dedicated token kept as a secret, find it again by its SHA-256 digest, and promote **that same digest** from staging to production before rolling back.
     labs:
       - etapes-et-declencheurs
       - artefacts
@@ -65,6 +67,7 @@ sections:
 
   - id: epreuves
     title: "Level exam"
-    description: "Repair a broken delivery chain, without hints: the end of the single level of the course."
+    description: >-
+      No hints: make a lying chain honest and green, publish a corrected version, promote it by digest to production, and list the risks you found.
     labs:
       - level-exams-chaine
