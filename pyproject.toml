@@ -61,6 +61,46 @@ norecursedirs = [
     "solution", "deps", "*.egg", ".git", ".venv",
 ]
 
+[tool.ruff]
+# Jeu de règles repris à l'identique des catalogues frères (Kubernetes,
+# Terraform, GitHub Actions) : un contributeur qui passe de l'un à l'autre ne
+# doit pas réapprendre ce qui est accepté. Ce dépôt n'en avait AUCUNE, si bien
+# que ruff y tournait sur ses défauts : les `# noqa: E402` posés par les
+# auteurs ne désignaient donc aucune règle active, et personne ne le voyait.
+target-version = "py312"
+
+# Ce que ruff ne touche JAMAIS, et pourquoi.
+#
+# `labs/*/fixtures/` est le point de départ que l'apprenant reçoit. Un lab peut
+# livrer du Python fautif à dessein, et le lint du catalogue n'a pas à le
+# corriger : ce serait modifier le sujet.
+#
+# `labs/*/files/` porte les dépôts d'exemple que les pipelines des labs
+# construisent. Ils sont le sujet de l'exercice, pas du code de ce dépôt.
+#
+# `challenge/work` est le répertoire de travail, jamais versionné.
+exclude = [
+    "labs/*/fixtures",
+    "labs/*/files",
+    "labs/*/challenge/work",
+]
+
+[tool.ruff.lint]
+select = [
+    "E4", "E7", "E9", "F",
+    "I", "UP", "B", "BLE", "SIM", "RUF", "EXE", "DTZ", "PLE", "PLW", "S",
+]
+ignore = [
+    # Les messages d'assertion enseignent ; les couper à 88 colonnes les
+    # rendrait moins lisibles.
+    "E501",
+    # `assert` est le verbe de pytest.
+    "S101",
+    # Appeler docker, git ou gh par leur nom depuis le PATH est le métier de ce
+    # dépôt : c'est ainsi que l'apprenant les appelle.
+    "S603", "S607",
+]
+
 [tool.uv]
 # Ce dépôt n'est pas un package Python — juste un fournisseur de labs.
 # uv crée quand même un venv pour les dev-deps (pytest, dsoxlab editable)

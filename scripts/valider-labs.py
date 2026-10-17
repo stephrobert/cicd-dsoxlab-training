@@ -64,9 +64,9 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import verdict_check
 from isolation_vm import IsolationEteinte, hotes_du_lab, snapshot_reset
 from lecture_yaml import YamlIllisible, lire_yaml
-import verdict_check
 
 RACINE = Path(__file__).resolve().parent.parent
 LABS = RACINE / "labs"

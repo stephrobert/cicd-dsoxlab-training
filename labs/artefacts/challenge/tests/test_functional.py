@@ -15,16 +15,15 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "_commun"))
 
-from forge import (  # noqa: E402
+from forge import (
     api,
     declencheurs,
-    etapes_run,
     fichier,
     statut,
     workflows,
 )
 
-from conftest import lab_host, message  # noqa: E402
+from conftest import lab_host, message
 
 HOTE = "forge-1.lab"
 VERSION = "1.0.0"

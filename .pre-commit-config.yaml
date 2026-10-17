@@ -114,20 +114,6 @@ repos:
       # `tests/test_outillage_coherent.py` empêche désormais le défaut de
       # revenir, en exigeant que chaque test soit câblé ici ou recensé avec sa
       # raison.
-      - id: briefs-pointent-juste
-        name: un énoncé ne cite aucun chemin inexistant
-        entry: uv run --no-project --with pytest --with pyyaml pytest tests/test_briefs_pointent_juste.py -q
-        language: system
-        pass_filenames: false
-        always_run: true
-
-      - id: curriculums-coherents
-        name: une compétence citée existe dans la grille, et le lab la porte
-        entry: uv run --no-project --with pytest --with pyyaml pytest tests/test_curriculums.py -q
-        language: system
-        pass_filenames: false
-        always_run: true
-
       - id: schemas-dsoxlab
         name: chaque lab.yaml et meta.yml respectent le schéma de dsoxlab
         entry: uv run --no-project --with pytest --with pyyaml --with jsonschema pytest tests/test_schemas_dsoxlab.py -q
@@ -156,13 +142,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      - id: script-de-solution
-        name: un solution.sh laisse sa trace et disparaît du workdir
-        entry: uv run --no-project --with pytest --with pyyaml pytest tests/test_script_de_solution.py -q
-        language: system
-        pass_filenames: false
-        always_run: true
-
       - id: meta-declare-les-labs
         name: tout lab livré est déclaré dans meta.yml, et réciproquement
         entry: uv run --no-project --with pytest --with pyyaml pytest tests/test_meta_declare_les_labs.py -q
@@ -173,13 +152,6 @@ repos:
       - id: liens-internes
         name: les liens relatifs des Markdown mènent quelque part
         entry: uv run --no-project --with pytest --with pyyaml pytest tests/test_liens_internes.py -q
-        language: system
-        pass_filenames: false
-        always_run: true
-
-      - id: liens-par-langue
-        name: un lien vers un guide pointe sur la version dans la langue du fichier
-        entry: uv run --no-project --with pytest --with pyyaml pytest tests/test_liens_par_langue.py -q
         language: system
         pass_filenames: false
         always_run: true

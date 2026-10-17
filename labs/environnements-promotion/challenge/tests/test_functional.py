@@ -16,9 +16,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "_commun"))
 
-from forge import api, declencheurs, etapes_run, workflows  # noqa: E402
+from forge import api, declencheurs, etapes_run, workflows
 
-from conftest import lab_host, message  # noqa: E402
+from conftest import lab_host, message
 
 HOTE = "forge-1.lab"
 JOURNAL = "/var/log/inventaire/deploiements.log"

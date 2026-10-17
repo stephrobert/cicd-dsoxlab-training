@@ -18,7 +18,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "_commun"))
 
-from forge import (  # noqa: E402
+from forge import (
     api,
     declencheurs,
     etapes_run,
@@ -27,7 +27,7 @@ from forge import (  # noqa: E402
     workflows,
 )
 
-from conftest import lab_host, message  # noqa: E402
+from conftest import lab_host, message
 
 HOTE = "forge-1.lab"
 JOURNAL = "/var/log/inventaire/deploiements.log"
@@ -116,7 +116,7 @@ def test_aucun_test_ignore_ni_etape_hors_make(pipelines):
             en=f"A failure is still masked: {c}",
             fr=f"Un échec est encore masqué : {c}",
         )
-        for ligne in (l.strip() for l in c.splitlines() if l.strip()):
+        for ligne in (brute.strip() for brute in c.splitlines() if brute.strip()):
             assert ligne.startswith("make"), message(
                 en=f"Step outside the Makefile, impossible to replay as is locally: {ligne}",
                 fr=f"Étape hors du Makefile, impossible à rejouer telle quelle en local : {ligne}",
@@ -169,7 +169,7 @@ def test_publication_reservee_aux_etiquettes(pipelines):
                 if "make publish" in str(etape.get("run", "")):
                     condition = str(etape.get("if", "")) + str(job.get("if", ""))
                     on = declencheurs(doc)
-                    seulement_tags = set(on) == {"push"} and set((on.get("push") or {})) == {"tags"}
+                    seulement_tags = set(on) == {"push"} and set(on.get("push") or {}) == {"tags"}
                     assert ("refs/tags/v" in condition and "!" not in condition) or seulement_tags, message(
                         en=f"{nom}: make publish runs on every branch; reserve it for v* tags.",
                         fr=f"{nom} : make publish tourne sur toute branche ; réservez-le aux étiquettes v*.",
@@ -284,9 +284,14 @@ def test_promotion_par_empreinte(host):
     )
     attendu = _sha_publie(host, version)
     journal = host.file(JOURNAL).content_string if host.file(JOURNAL).exists else ""
-    lignes = [l.split() for l in journal.splitlines() if len(l.split()) >= 4]
-    recette = [l for l in lignes if l[1] == "recette" and l[2] == version and l[3] == attendu]
-    prod = [l for l in lignes if l[1] == "production" and l[2] == version and l[3] == attendu and l[4:] == ["empreinte-imposee"]]
+    lignes = [ligne.split() for ligne in journal.splitlines()
+              if len(ligne.split()) >= 4]
+    recette = [entree for entree in lignes
+               if entree[1] == "recette" and entree[2] == version
+               and entree[3] == attendu]
+    prod = [entree for entree in lignes
+            if entree[1] == "production" and entree[2] == version
+            and entree[3] == attendu and entree[4:] == ["empreinte-imposee"]]
     assert recette, message(
         en=f"{version} was not deployed to staging with the registry's checksum.",
         fr=f"{version} n'a pas été déployée en recette avec l'empreinte du registre.",
