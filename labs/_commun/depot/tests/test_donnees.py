@@ -6,7 +6,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from inventaire.donnees import charger, compter_par_role, filtrer  # noqa: E402
+from inventaire.donnees import charger, compter_par_role, filtrer
 
 SERVEURS = [
     {"nom": "web-1", "role": "web"},

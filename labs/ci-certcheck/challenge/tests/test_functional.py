@@ -26,9 +26,9 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "_commun"))
 
-from forge import api, statut  # noqa: E402
+from forge import api, statut
 
-from conftest import lab_host, message  # noqa: E402
+from conftest import lab_host, message
 
 HOTE = "forge-1.lab"
 DEPOT = "apprenant/certcheck"

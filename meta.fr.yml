@@ -1,0 +1,33 @@
+# Surcharge française du catalogue, lue par dsoxlab (0.1.54) et par
+# scripts/gen_catalog.py. Appariée par `id`, jamais par position : une
+# section insérée au milieu ne décale donc rien.
+#
+# Ce fichier manquait, et `meta.yml` portant l'anglais, une session
+# française lisait les titres de sections en anglais, dans `dsoxlab
+# progress` comme dans le README.
+repo:
+  title: "Formation CI/CD : le modèle avant l'outil"
+  description: >-
+    Les labs de la formation « Introduction aux pipelines CI/CD » du blog,
+    joués SANS AUCUN COMPTE sur une forge locale (Forgejo et son runner)
+    dans une VM du lab. Des étapes écrites comme cibles du dépôt, une
+    pipeline qui ne fait que les orchestrer, un artefact construit une fois
+    et promu de la recette à la production. Chaque lab est noté sur l'état
+    qu'il laisse, lu dans la forge et sur la machine, jamais sur les
+    commandes tapées.
+
+sections:
+  - id: initiation
+    title: "Une première CI, pour Développer pour les Ops"
+    description: >-
+      Lire la pipeline fournie avec `certcheck`, un petit outil Python (dépendances, qualité, tests, paquet), réparer `main`, puis faire échouer un test et le formatage dans une demande de fusion, rejouer l'échec en local et corriger.
+
+  - id: fondamentaux
+    title: "Le modèle avant l'outil"
+    description: >-
+      Écrire une cible `make`, puis une pipeline qui n'appelle que `make lint test build`, verte sur `main` et rouge sur un test cassé dans une demande de fusion, avec l'échec rejoué en local. Puis publier l'artefact sur une étiquette `v*` avec un jeton dédié gardé en secret, le retrouver par son empreinte SHA-256, et promouvoir **cette même empreinte** de la recette à la production avant de revenir en arrière.
+
+  - id: epreuves
+    title: "Épreuve de niveau"
+    description: >-
+      Sans indice : rendre honnête et verte une chaîne qui ment, publier une version corrigée, la promouvoir par empreinte en production, et lister les risques trouvés.
