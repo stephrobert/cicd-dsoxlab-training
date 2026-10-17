@@ -76,7 +76,14 @@ target-version = "py312"
 # corriger : ce serait modifier le sujet.
 #
 # `labs/*/files/` porte les dépôts d'exemple que les pipelines des labs
-# construisent. Ils sont le sujet de l'exercice, pas du code de ce dépôt.
+# construisent. Ils sont le sujet de l'exercice, pas du code de ce dépôt, et
+# l'un d'eux porte même un défaut VOULU que l'apprenant doit trouver.
+#
+# Cette exclusion vaut pour un PARCOURS (`ruff check .`). Elle ne protège pas
+# un fichier passé en argument quand son dépôt d'exemple a son propre
+# `[tool.ruff]` : ruff retient alors la configuration la plus proche, et ne lit
+# jamais celle d'ici. C'est pourquoi le hook pre-commit écarte ces chemins
+# lui-même, avant d'appeler ruff.
 #
 # `challenge/work` est le répertoire de travail, jamais versionné.
 exclude = [
