@@ -23,6 +23,29 @@ that has none.
 - **Provisioned infrastructure**: 5 lab(s) are `runtime: vm` on the `lab-cicd` network and require `dsoxlab provision` before the campaign and `dsoxlab destroy` after. Expected hosts: `forge-1.lab`.
 - Real free memory, not what `doctor` reports: destroy the other repositories' infrastructure BEFORE provisioning this one, or the VMs compete for RAM and labs fail by exhaustion, which looks like a lab defect.
 
+### This catalogue's isolation is not the others'
+
+`CLAUDE.md` states it, and it is to be read before trying to "fix" anything:
+
+> **Isolation through setup, not snapshots**: every `setup.yaml` replays the
+> base, then deletes and recreates the `inventaire` repository, its clone on
+> the learner's side and the environments. `scripts/isolation_vm.py` is
+> therefore a **deliberate no-op**, kept for `valider-labs.py`'s interface.
+
+So **do not add a `scripts/rebase-vms.sh` here**: a script that freezes bases
+would go against its design. That file's absence is intended.
+
+The base itself follows the same rule as the other VM catalogues:
+
+> **No hook after provisioning**: the base `labs/_commun/socle.yaml` (forge,
+> runner, `inventaire` repository) is imported at the top of **every**
+> `setup.yaml`. It is idempotent: each step checks the real state, never a
+> mere marker file.
+
+That idempotence is why the 2026-10-19 campaign returned 5 VALID here with no
+special preparation, where kubernetes failed: the base is laid again by each
+lab, and the validator needs no prior state to take its photograph.
+
 ## The command
 
 ```bash
