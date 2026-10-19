@@ -24,6 +24,31 @@ qui n'en a pas.
 - **Une infrastructure provisionnée** : 5 lab(s) sont en `runtime: vm` sur le réseau `lab-cicd`, et exigent `dsoxlab provision` avant la campagne, `dsoxlab destroy` après. Les hôtes attendus sont `forge-1.lab`.
 - De la mémoire libre réelle, et non celle qu'annonce `doctor` : détruire l'infra des autres dépôts AVANT de provisionner celle-ci, sinon les VM se disputent la RAM et les labs échouent par épuisement, ce qui ressemble à un défaut de lab.
 
+### L'isolation de ce catalogue n'est pas celle des autres
+
+`CLAUDE.md` l'écrit, et c'est à lire avant de vouloir « réparer » quoi que ce
+soit :
+
+> **Isolation par le setup, pas par snapshot** : chaque `setup.yaml` rejoue le
+> socle puis supprime et recrée le dépôt `inventaire`, son clone chez
+> l'apprenant et les environnements. `scripts/isolation_vm.py` est donc un
+> **no-op volontaire**, gardé pour l'interface de `valider-labs.py`.
+
+Donc **ne pas y poser de `scripts/rebase-vms.sh`** : un script qui fige des
+bases irait contre sa conception. L'absence de ce fichier est voulue.
+
+Le socle, lui, suit la même règle que les autres catalogues à VM :
+
+> **Pas de point d'accroche après le provisionnement** : le socle
+> `labs/_commun/socle.yaml` (forge, runner, dépôt `inventaire`) est importé en
+> tête de **chaque** `setup.yaml`. Il est idempotent : chaque étape vérifie
+> l'état réel, jamais un simple fichier témoin.
+
+C'est cette idempotence qui explique que la campagne du 2026-10-19 ait rendu
+5 VALIDE ici sans préparation particulière, là où kubernetes échouait : le
+socle se repose à chaque lab, et le validateur n'a pas besoin d'un état
+préalable pour photographier.
+
 ## La commande
 
 ```bash
