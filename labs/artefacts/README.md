@@ -1,7 +1,7 @@
 # Lab: build once, publish, find it again by its digest
 
 Companion lesson (in French):
-[Artefacts](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/).
+[Artefacts](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/).
 
 ```bash
 dsoxlab run artefacts

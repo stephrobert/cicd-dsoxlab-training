@@ -14,7 +14,7 @@ skills:
   - triggers
 distros:
   - debian13
-doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/
+doc_url: https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/
 runtime:
   type: vm
   # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.

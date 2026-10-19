@@ -17,4 +17,4 @@ sans la reconstruire, puis faites un **retour arrière** de la production vers
 `1.0.0`.
 
 Méthode dans la leçon compagnon :
-https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/
+https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/

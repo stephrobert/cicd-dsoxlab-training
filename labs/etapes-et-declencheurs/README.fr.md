@@ -1,7 +1,7 @@
 # Lab : des étapes dans le dépôt, une pipeline qui les orchestre
 
 Leçon compagnon :
-[Étapes et déclencheurs](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/).
+[Étapes et déclencheurs](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/).
 
 La machine `forge-1.lab` porte une forge **Forgejo** et son **runner**
 (exécuteur `host`, label `debian`). Le dépôt `apprenant/inventaire` y est

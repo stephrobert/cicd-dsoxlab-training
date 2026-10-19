@@ -13,4 +13,4 @@ a pull request, a broken test and broken formatting, to see how the CI
 reports them, and fix them.
 
 Method in the companion lesson (in French):
-https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/
+https://www.stephane-robert.info/docs/developper/pratiques/ci-certcheck/

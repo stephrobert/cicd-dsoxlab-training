@@ -13,4 +13,4 @@ deux échecs dans une demande de fusion, un test cassé et un formatage cassé,
 pour voir comment la CI les signale, et les corriger.
 
 Méthode dans la leçon compagnon :
-https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/
+https://www.stephane-robert.info/docs/developper/pratiques/ci-certcheck/

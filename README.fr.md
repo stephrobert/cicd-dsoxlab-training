@@ -5,7 +5,7 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](./LICENSE)
 
 Les labs de la formation
-[Introduction aux pipelines CI/CD : le modèle avant l'outil](https://blog.stephane-robert.info/docs/pipeline-cicd/)
+[Introduction aux pipelines CI/CD : le modèle avant l'outil](https://www.stephane-robert.info/docs/pipeline-cicd/)
 du blog, joués avec [dsoxlab](https://github.com/stephrobert/dsoxlab).
 
 ## Ce que c'est
@@ -177,7 +177,7 @@ Lire la pipeline fournie avec `certcheck`, un petit outil Python (dépendances, 
 
 | Lab (id) | Titre | Niveau | Runtime | Guide compagnon |
 |---|---|---|---|---|
-| `ci-certcheck` | La CI de certcheck : six étapes, un run rouge, une correction | o1 | vm | [guide](https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/) |
+| `ci-certcheck` | La CI de certcheck : six étapes, un run rouge, une correction | o1 | vm | [guide](https://www.stephane-robert.info/docs/developper/pratiques/ci-certcheck/) |
 
 ### Le modèle avant l'outil
 
@@ -185,9 +185,9 @@ Lire la pipeline fournie avec `certcheck`, un petit outil Python (dépendances, 
 
 | Lab (id) | Titre | Niveau | Runtime | Guide compagnon |
 |---|---|---|---|---|
-| `etapes-et-declencheurs` | Des étapes dans le dépôt, une pipeline qui les orchestre | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/) |
-| `artefacts` | Construire une fois, publier, retrouver par l'empreinte | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/) |
-| `environnements-promotion` | Promouvoir le même artefact de la recette à la production, puis revenir en arrière | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/) |
+| `etapes-et-declencheurs` | Des étapes dans le dépôt, une pipeline qui les orchestre | c1 | vm | [guide](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/) |
+| `artefacts` | Construire une fois, publier, retrouver par l'empreinte | c1 | vm | [guide](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/) |
+| `environnements-promotion` | Promouvoir le même artefact de la recette à la production, puis revenir en arrière | c1 | vm | [guide](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/) |
 
 ### Épreuve de niveau
 
@@ -195,7 +195,7 @@ Sans indice : rendre honnête et verte une chaîne qui ment, publier une version
 
 | Lab (id) | Titre | Niveau | Runtime | Guide compagnon |
 |---|---|---|---|---|
-| `level-exams-chaine` | Épreuve de niveau : réparer une chaîne de livraison cassée | c1 | vm | [guide](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/epreuve-chaine-cassee/) |
+| `level-exams-chaine` | Épreuve de niveau : réparer une chaîne de livraison cassée | c1 | vm | [guide](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/epreuve-chaine-cassee/) |
 
 _5 labs, table générée par `scripts/gen_catalog.py`._
 <!-- LABS:END -->

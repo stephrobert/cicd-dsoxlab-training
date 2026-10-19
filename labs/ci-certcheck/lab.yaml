@@ -15,7 +15,7 @@ skills:
   - linting
 distros:
   - debian13
-doc_url: https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/
+doc_url: https://www.stephane-robert.info/docs/developper/pratiques/ci-certcheck/
 runtime:
   type: vm
   # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.

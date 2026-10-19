@@ -1,7 +1,7 @@
 # Lab: stages in the repository, a pipeline that orchestrates them
 
 Companion lesson (in French):
-[Étapes et déclencheurs](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/).
+[Étapes et déclencheurs](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/).
 
 The `forge-1.lab` machine runs a **Forgejo** forge and its **runner** (`host`
 executor, `debian` label). The `apprenant/inventaire` repository is pushed

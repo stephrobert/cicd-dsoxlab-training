@@ -1,7 +1,7 @@
 # Lab: certcheck's CI, six stages, a red run, a fix
 
 Companion lesson, in the **Development for Ops** course:
-[certcheck's CI](https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/) (in French).
+[certcheck's CI](https://www.stephane-robert.info/docs/developper/pratiques/ci-certcheck/) (in French).
 
 The `forge-1.lab` machine carries a **Forgejo** forge, its **runner** (`host`
 executor, `debian` label) and **uv**. The `apprenant/certcheck` repository, a

@@ -1,7 +1,7 @@
 # Lab : la CI de certcheck, six étapes, un run rouge, une correction
 
 Leçon compagnon, dans la formation **Développer pour les Ops** :
-[La CI de certcheck](https://blog.stephane-robert.info/docs/developper/pratiques/ci-certcheck/).
+[La CI de certcheck](https://www.stephane-robert.info/docs/developper/pratiques/ci-certcheck/).
 
 La machine `forge-1.lab` porte une forge **Forgejo**, son **runner**
 (exécuteur `host`, label `debian`) et **uv**. Le dépôt `apprenant/certcheck`,

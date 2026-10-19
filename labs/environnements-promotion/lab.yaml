@@ -14,7 +14,7 @@ skills:
   - rollback
 distros:
   - debian13
-doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/
+doc_url: https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/
 runtime:
   type: vm
   # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.

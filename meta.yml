@@ -22,7 +22,7 @@ repo:
   id: cicd-dsoxlab-training
   category: cicd
   title: "CI/CD Training: the model before the tool"
-  blog_url: "https://blog.stephane-robert.info/docs/pipeline-cicd/"
+  blog_url: "https://www.stephane-robert.info/docs/pipeline-cicd/"
   issues_url: "https://github.com/stephrobert/cicd-dsoxlab-training/issues"
   description: |
     Teaching labs for the blog's introduction to CI/CD pipelines, played

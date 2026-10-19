@@ -14,7 +14,7 @@ skills:
   - sha256
 distros:
   - debian13
-doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/
+doc_url: https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/
 runtime:
   type: vm
   # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
