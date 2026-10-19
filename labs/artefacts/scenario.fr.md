@@ -12,4 +12,4 @@ Puis vous retrouvez la version publiée et la vérifiez par son **empreinte
 SHA-256**.
 
 Méthode dans la leçon compagnon :
-https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/
+https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/

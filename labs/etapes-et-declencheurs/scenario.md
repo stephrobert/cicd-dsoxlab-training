@@ -11,4 +11,4 @@ The team's forge is a local **Forgejo** instance with its **runner**, in the
 identically on your machine.
 
 Companion lesson (in French):
-https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/
+https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/

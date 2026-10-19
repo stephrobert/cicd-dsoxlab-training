@@ -11,4 +11,4 @@ commandes du `Makefile` : elle ne fait que **l'appeler**, pour qu'un échec en
 CI se reproduise à l'identique sur votre poste.
 
 Méthode dans la leçon compagnon :
-https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/
+https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/etapes-et-declencheurs/

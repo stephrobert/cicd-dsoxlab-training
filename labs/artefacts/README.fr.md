@@ -1,7 +1,7 @@
 # Lab : construire une fois, publier, retrouver par l'empreinte
 
 Leçon compagnon :
-[Artefacts](https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/).
+[Artefacts](https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/).
 
 ```bash
 dsoxlab run artefacts

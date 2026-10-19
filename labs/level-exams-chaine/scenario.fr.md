@@ -8,4 +8,4 @@ et le déploiement reconstruit l'artefact au lieu d'installer celui qui a été
 testé. C'est l'épreuve de fin du niveau « Comprendre et construire une chaîne
 de livraison » : tout ce que la formation a enseigné, sans indice.
 
-Formation : https://blog.stephane-robert.info/docs/pipeline-cicd/
+Formation : https://www.stephane-robert.info/docs/pipeline-cicd/

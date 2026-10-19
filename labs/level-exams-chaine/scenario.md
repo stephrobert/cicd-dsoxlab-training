@@ -8,4 +8,4 @@ artifact instead of installing the one that was tested. This is the final exam
 of the "Understanding and building a delivery chain" level: everything the
 course taught, without hints.
 
-Course (in French): https://blog.stephane-robert.info/docs/pipeline-cicd/
+Course (in French): https://www.stephane-robert.info/docs/pipeline-cicd/

@@ -14,7 +14,7 @@ skills:
   - pipeline-security
 distros:
   - debian13
-doc_url: https://blog.stephane-robert.info/docs/pipeline-cicd/fondamentaux/epreuve-chaine-cassee/
+doc_url: https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/epreuve-chaine-cassee/
 runtime:
   type: vm
   # L'apprenant ouvre lui-même sa session : ssh forge-1.lab.
