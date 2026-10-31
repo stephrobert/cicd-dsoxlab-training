@@ -237,11 +237,15 @@ jobs:
       # borne, uv répond « aucune version ne satisfait la contrainte », ce qui
       # nomme le bon coupable.
       #
-      # 0.4.1 et pas plus haut : c'est la version qui a introduit le champ
-      # `status` de `check --json`, sans lequel `scripts/verdict_check.py`
-      # refuse de conclure. Ce catalogue n'exige rien de plus récent.
+      # 0.5.5, comme les catalogues frères (proxmox, publier-service,
+      # gitlab-ci) : un plancher par dépôt ferait valider deux catalogues par
+      # deux moteurs, donc par deux jeux de contrôles, et le vert de l'un ne
+      # dirait plus ce que dit le vert de l'autre. Le minimum propre à ce dépôt
+      # est plus bas (0.4.1, le champ `status` de `check --json` qu'exige
+      # `scripts/verdict_check.py`). Ce catalogue passe `validate-structure
+      # --check-urls` avec 0.5.5, mesuré le 2026-10-31.
       - name: Vérifier la structure et les leçons jumelées
-        run: uvx 'dsoxlab>=0.4.1' validate-structure --check-urls
+        run: uvx 'dsoxlab>=0.5.5' validate-structure --check-urls
 
       # Un verrou qui dérive de son pyproject ne verrouille plus rien : les
       # scanners de vulnérabilités continuent de lire uv.lock, qui ne décrit
