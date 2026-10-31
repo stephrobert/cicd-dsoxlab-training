@@ -1,7 +1,7 @@
 {
-  "genere_le": "2026-10-14 07:01:18",
+  "genere_le": "2026-10-31 08:51:11",
   "act": "act version 0.2.84",
-  "dsoxlab": "dsoxlab 0.3.5",
+  "dsoxlab": "dsoxlab 0.5.5",
   "labs": {
     "artefacts": {
       "id": "artefacts",
@@ -34,10 +34,10 @@
       "score_avant": 0,
       "score_apres": 100,
       "tests": "5/5",
-      "duree_s": 62.5,
+      "duree_s": 59.1,
       "traces": [],
       "pourquoi": "",
-      "date": "2026-10-14"
+      "date": "2026-10-31"
     },
     "etapes-et-declencheurs": {
       "id": "etapes-et-declencheurs",
@@ -46,10 +46,10 @@
       "score_avant": 0,
       "score_apres": 100,
       "tests": "7/7",
-      "duree_s": 38.1,
+      "duree_s": 96.8,
       "traces": [],
       "pourquoi": "",
-      "date": "2026-10-14"
+      "date": "2026-10-31"
     },
     "level-exams-chaine": {
       "id": "level-exams-chaine",
@@ -58,10 +58,10 @@
       "score_avant": 0,
       "score_apres": 100,
       "tests": "11/11",
-      "duree_s": 69.4,
+      "duree_s": 66.9,
       "traces": [],
       "pourquoi": "",
-      "date": "2026-10-14"
+      "date": "2026-10-31"
     }
   }
 }
