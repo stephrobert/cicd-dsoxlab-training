@@ -198,7 +198,7 @@ repos:
       # accuser le catalogue plutôt que l'outil.
       - id: contrat-du-catalogue
         name: dsoxlab validate-structure
-        entry: uvx dsoxlab>=0.4.1 validate-structure
+        entry: uvx 'dsoxlab>=0.6.1' validate-structure
         language: system
         pass_filenames: false
         always_run: true
