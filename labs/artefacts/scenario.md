@@ -11,4 +11,4 @@ version, to the forge's **package registry**. Publication only happens on a
 version again and check it by its **SHA-256 digest**.
 
 Companion lesson (in French):
-https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/artefacts/
+https://www.stephane-robert.info/en/docs/devsecops/delivery/artifacts/

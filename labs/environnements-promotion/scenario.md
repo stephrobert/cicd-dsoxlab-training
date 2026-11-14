@@ -15,4 +15,4 @@ You write the **on-demand** deployment pipeline (the approval gesture), deploy
 **roll production back** to `1.0.0`.
 
 Companion lesson (in French):
-https://www.stephane-robert.info/docs/pipeline-cicd/fondamentaux/environnements-promotion/
+https://www.stephane-robert.info/en/docs/devsecops/delivery/environments-and-promotion/
