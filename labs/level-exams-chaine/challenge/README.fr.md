@@ -1,6 +1,20 @@
-# Épreuve de niveau : réparer une chaîne de livraison cassée
+# Une chaîne qui ment
 
-## Mission
+## La situation
+
+L'équipe d'`inventaire` a monté sa chaîne vite. La pipeline est verte, une
+version est en ligne, tout le monde est content. En la relisant, vous voyez
+qu'elle ment : un échec de test est masqué, une étape ne se rejoue pas en local,
+le jeton de publication se lit dans le journal, n'importe quelle branche publie,
+et le déploiement reconstruit l'artefact au lieu d'installer celui qui a été
+testé. C'est l'épreuve de fin du niveau « Comprendre et construire une chaîne
+de livraison » : tout ce que la formation a enseigné, sans indice.
+
+Formation : https://www.stephane-robert.info/docs/pipeline-cicd/
+
+## Épreuve de niveau : réparer une chaîne de livraison cassée
+
+### Mission
 
 Sur `forge-1.lab`, dans `~/inventaire`. La chaîne livre, en apparence : la
 pipeline de `main` est verte et la version `1.0.0` est publiée. Elle ment.
@@ -10,12 +24,12 @@ disposez de la forge (`ssh -L 3000:localhost:3000 forge-1.lab`, compte
 `apprenant` / `apprenant-lab`), du dépôt et des deux environnements (recette
 sur 8081, production sur 8082).
 
-## Prérequis
+### Prérequis
 
 Les leçons du cœur de la formation, et savoir lire puis corriger une fonction
 Python de quelques lignes.
 
-## Où se gèrent jetons et secrets dans Forgejo
+### Où se gèrent jetons et secrets dans Forgejo
 
 Les jetons d'accès se gèrent dans les réglages du compte (**Applications**) ou
 par l'API `/api/v1/users/apprenant/tokens` ; les secrets de pipeline, dans les
@@ -23,7 +37,7 @@ réglages du dépôt (**Actions**, **Secrets**) ou par l'API
 `/api/v1/repos/apprenant/inventaire/actions/secrets/<NOM>`. Ne révoquez pas le
 jeton `lab-…` : c'est celui de votre clone et du correcteur.
 
-## Objectif (état attendu)
+### Objectif (état attendu)
 
 1. La pipeline d'intégration lance `make lint`, `make test` et `make build`,
    dans cet ordre, ne masque aucun échec, épingle chaque action par le SHA de
@@ -41,7 +55,7 @@ jeton `lab-…` : c'est celui de votre clone et du correcteur.
 5. `risques.md`, à la racine du dépôt sur `main`, nomme les défauts de
    sécurité trouvés, un par ligne, avec leur correction.
 
-## Validation
+### Validation
 
 ```bash
 dsoxlab check level-exams-chaine

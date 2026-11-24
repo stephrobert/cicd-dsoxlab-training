@@ -1,6 +1,20 @@
-# Level exam: repair a broken delivery chain
+# A chain that lies
 
-## Mission
+## The situation
+
+The `inventaire` team set up its chain quickly. The pipeline is green, a
+version is online, everybody is happy. Reading it again, you see it lies: a
+test failure is masked, a step cannot be replayed locally, the publication
+token can be read in the log, any branch publishes, and deployment rebuilds the
+artifact instead of installing the one that was tested. This is the final exam
+of the "Understanding and building a delivery chain" level: everything the
+course taught, without hints.
+
+Course: https://www.stephane-robert.info/en/docs/devsecops/delivery/cicd-overview/
+
+## Level exam: repair a broken delivery chain
+
+### Mission
 
 On `forge-1.lab`, in `~/inventaire`. The chain delivers, apparently: the `main`
 pipeline is green and version `1.0.0` is published. It lies. Make it
@@ -10,12 +24,12 @@ production, then write down what you found. No hints: you have the forge
 `apprenant-lab`), the repository and both environments (staging on 8081,
 production on 8082).
 
-## Prerequisites
+### Prerequisites
 
 The core lessons of the course, and being able to read then fix a Python
 function of a few lines.
 
-## Where tokens and secrets are managed in Forgejo
+### Where tokens and secrets are managed in Forgejo
 
 Access tokens are managed in the account settings (**Applications**) or
 through the `/api/v1/users/apprenant/tokens` API; pipeline secrets in the
@@ -23,7 +37,7 @@ repository settings (**Actions**, **Secrets**) or through the
 `/api/v1/repos/apprenant/inventaire/actions/secrets/<NAME>` API. Do not revoke
 the `lab-…` token: it is used by your clone and by the grader.
 
-## Goal (expected state)
+### Goal (expected state)
 
 1. The integration pipeline runs `make lint`, `make test` and `make build`,
    in that order, masks no failure, pins every action to its commit SHA, prints
@@ -40,7 +54,7 @@ the `lab-…` token: it is used by your clone and by the grader.
 5. `risques.md`, at the repository root on `main`, names the security defects
    found, one per line, with their fix.
 
-## Validation
+### Validation
 
 ```bash
 dsoxlab check level-exams-chaine
